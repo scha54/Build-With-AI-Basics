@@ -39,7 +39,7 @@ Build mode: learn
   Learner check: Type a task like "Quarterly taxes" and click Postpone, or click "Roll Random Excuse", and verify you get +50 points, an effort reprimand, and a confetti burst.
   Commit: `Implement procrastination confessional, excuse library, and confetti rewards`
 
-- [ ] **4. Badges & Milestone Accolades**
+- [x] **4. Badges & Milestone Accolades**
   Becomes usable: 4 milestone achievement badges that visually unlock with confetti and celebration when you reach stillness and score targets.
   Why now: Closes the motivational loop by rewarding persistence and confessions with permanent visual credentials.
   PRD ref: `prd.md > Features and Behavior > Badges & Accolades`
