@@ -9,7 +9,7 @@ Build mode: learn
 
 ## Slices
 
-- [ ] **1. Scaffolding, Executive Header, and Stillness/Violation State Machine**
+- [x] **1. Scaffolding, Executive Header, and Stillness/Violation State Machine**
   Becomes usable: A running dark-mode dashboard where leaving the mouse/keyboard untouched accumulates idle time and +1 pt/sec to the Laziness Score, and moving or typing immediately pauses the timer and surfaces the deadpan "Cardinal Sin" reprimand banner.
   Why now: Bootstraps the application files, design tokens, and proves the central unique kernel (the FSM engine and deadpan scolding) immediately on slice one.
   PRD ref: `prd.md > Screens and Layout`, `prd.md > Features and Behavior > Sloth Mode Idle Tracker`, `prd.md > Cardinal Sin Movement Reprimand`
@@ -61,7 +61,7 @@ Build mode: learn
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — Slice 1 (core idle FSM, stillness/movement feedback, and visual tokens)
+- [x] Early usable behavior explored — Slice 1 (core idle FSM, stillness/movement feedback, and visual tokens)
 - [ ] Final kick-the-tires exploration and feedback completed — Slice 5 (complete 5-card dashboard)
 
 ## Final Review

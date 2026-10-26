@@ -1,12 +1,14 @@
 /**
  * LazyLegend — Application Coordinator
  * Implements: spec.md > Components > ExecutiveHeaderComponent, SlothTrackerComponent
+ * Persists via: spec.md > Data Model & Persistence Layer
  */
 (function() {
   window.LazyLegend = window.LazyLegend || {};
+  const LazyLegend = window.LazyLegend;
 
-  // Simple in-memory session score for Slice 1 (persisted in Slice 2)
-  let currentScore = 0;
+  // Active state loaded from localStorage
+  let appState = null;
   let currentRank = "Level 1: Novice Procrastinator";
 
   function formatTime(totalSeconds) {
@@ -45,7 +47,20 @@
     badge.textContent = currentRank;
   }
 
+  function renderState() {
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const timerClock = document.getElementById('timerClock');
+
+    if (scoreDisplay) scoreDisplay.textContent = appState.score;
+    if (timerClock) timerClock.textContent = formatTime(appState.longestStreak);
+    updateRank(appState.score);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    // 1. Load persisted state or fallback
+    appState = LazyLegend.StorageManager.load();
+    renderState();
+
     const scoreDisplay = document.getElementById('scoreDisplay');
     const timerClock = document.getElementById('timerClock');
     const statusPill = document.getElementById('statusPill');
@@ -53,17 +68,23 @@
     const reprimandText = document.getElementById('reprimandText');
     const btnResetDay = document.getElementById('btnResetDay');
 
-    // Instantiate Tracker FSM
+    // 2. Instantiate Tracker FSM
     const tracker = new LazyLegend.ActivityTracker({
       idleThresholdMs: 2000,
       heartbeatMs: 1000,
       
       onTick: (totalSeconds, streakSeconds) => {
-        currentScore += 1;
-        if (scoreDisplay) scoreDisplay.textContent = currentScore;
+        appState.score += 1;
+        appState.totalIdleSeconds += 1;
+        appState.longestStreak = Math.max(appState.longestStreak, streakSeconds);
+        
+        // Persist state on tick
+        LazyLegend.StorageManager.save(appState);
+
+        if (scoreDisplay) scoreDisplay.textContent = appState.score;
         if (timerClock) timerClock.textContent = formatTime(streakSeconds);
         showPointPopup(1);
-        updateRank(currentScore);
+        updateRank(appState.score);
       },
 
       onStateChange: (newState) => {
@@ -89,17 +110,18 @@
       }
     });
 
+    // 3. Reset Day Action
     if (btnResetDay) {
       btnResetDay.addEventListener('click', () => {
-        currentScore = 0;
-        if (scoreDisplay) scoreDisplay.textContent = '0';
+        appState = LazyLegend.StorageManager.reset();
+        renderState();
         if (timerClock) timerClock.textContent = '00:00:00';
         if (reprimandBanner) reprimandBanner.style.display = 'none';
-        updateRank(0);
       });
     }
 
     tracker.start();
     LazyLegend.tracker = tracker;
+    LazyLegend.getState = () => appState;
   });
 })();
