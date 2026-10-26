@@ -77,13 +77,27 @@
         </div>
       </section>
 
-      <!-- Placeholder card for Slice 5 -->
-      <section class="card" id="cardCertificate" style="opacity: 0.5;">
+      <!-- Card 4: Slacker Certificate -->
+      <section class="card" id="cardCertificate">
         <div class="card-header">
-          <h2 class="card-title">📜 Slacker Certificate</h2>
-          <span style="font-size: 0.75rem; color: var(--ll-text-muted);">Coming in Slice 5</span>
+          <h2 class="card-title">📜 Official Slacker Certificate</h2>
+          <span class="status-pill" style="background: rgba(56, 189, 248, 0.15); color: var(--ll-accent-blue); border: 1px solid var(--ll-accent-blue);">1-Click Copy</span>
         </div>
-        <p style="color: var(--ll-text-muted); font-size: 0.88rem;">1-click clipboard export will be wired in Slice 5.</p>
+        <div class="cert-preview-box" id="certPreview">Loading Slacker Audit...</div>
+        <button id="btnCopyCert" class="btn-copy-cert">
+          <span>📋 Copy Official Slacker Certificate</span>
+        </button>
+      </section>
+
+      <!-- Card 5: Colleague Leaderboard -->
+      <section class="card" id="cardLeaderboard">
+        <div class="card-header">
+          <h2 class="card-title">📊 Colleague Leaderboard</h2>
+          <span class="status-pill" id="leaderboardStandingPill" style="background: rgba(245, 158, 11, 0.15); color: var(--ll-accent-sloth-gold); border: 1px solid var(--ll-accent-sloth-gold);">Rank #5</span>
+        </div>
+        <div class="leaderboard-list" id="leaderboardList">
+          <!-- Rendered dynamically by js/app.js -->
+        </div>
       </section>
     </main>
   </div>
@@ -102,6 +116,8 @@
   <script src="js/state.js"></script>
   <script src="js/excuses.js"></script>
   <script src="js/badges.js"></script>
+  <script src="js/certificate.js"></script>
+  <script src="js/leaderboard.js"></script>
   <script src="js/tracker.js"></script>
   <script src="js/app.js"></script>
 </body>

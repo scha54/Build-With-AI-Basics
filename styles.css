@@ -531,6 +531,134 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* Slacker Certificate Specific */
+.cert-preview-box {
+  background: #06090e;
+  border: 1px solid var(--ll-border-subtle);
+  border-radius: var(--ll-radius-sm);
+  padding: 1rem;
+  font-family: var(--ll-font-mono);
+  font-size: 0.8rem;
+  color: #7dd3fc;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  margin-bottom: 1rem;
+  user-select: all;
+  border-left: 3px solid var(--ll-accent-sloth-gold);
+}
+
+.btn-copy-cert {
+  width: 100%;
+  background: var(--ll-accent-sloth-gold);
+  color: #0b0f17;
+  border: none;
+  border-radius: var(--ll-radius-sm);
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-copy-cert:hover {
+  background: #fbbf24;
+  transform: translateY(-1px);
+}
+
+.btn-copy-cert.copied {
+  background: var(--ll-accent-idle-green);
+  color: #0b0f17;
+}
+
+/* Colleague Leaderboard Specific */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.leaderboard-item {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--ll-border-subtle);
+  border-radius: var(--ll-radius-sm);
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.leaderboard-item.user-item {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--ll-accent-sloth-gold);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+}
+
+.lb-rank {
+  font-family: var(--ll-font-mono);
+  font-weight: 800;
+  font-size: 0.95rem;
+  width: 28px;
+  text-align: center;
+  color: var(--ll-text-muted);
+}
+
+.leaderboard-item.user-item .lb-rank {
+  color: var(--ll-accent-sloth-gold);
+}
+
+.lb-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.lb-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.lb-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lb-badge-you {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: var(--ll-accent-sloth-gold);
+  color: #000;
+  padding: 1px 5px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.lb-activity {
+  font-size: 0.75rem;
+  color: var(--ll-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.lb-score {
+  font-family: var(--ll-font-mono);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--ll-accent-sloth-gold);
+  text-align: right;
+  flex-shrink: 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .executive-header {

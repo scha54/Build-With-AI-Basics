@@ -1,6 +1,6 @@
 /**
  * LazyLegend — Application Coordinator
- * Implements: spec.md > Components > ExecutiveHeaderComponent, SlothTrackerComponent, ProcrastinationConfessionalComponent, BadgeManagerComponent
+ * Implements: spec.md > Components (All 5 Cards & Executive Header)
  * Persists via: spec.md > Data Model & Persistence Layer
  */
 (function() {
@@ -11,6 +11,7 @@
   let appState = null;
   let currentRank = "Level 1: Novice Procrastinator";
   let toastTimeout = null;
+  let copyTimeout = null;
 
   function formatTime(totalSeconds) {
     const hours = Math.floor(totalSeconds / 3600);
@@ -108,6 +109,46 @@
     }).join('');
   }
 
+  function renderCertificate() {
+    const preview = document.getElementById('certPreview');
+    if (!preview || !LazyLegend.generateCertificateText) return;
+    preview.textContent = LazyLegend.generateCertificateText(appState);
+  }
+
+  function renderLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    const standingPill = document.getElementById('leaderboardStandingPill');
+    if (!list || !LazyLegend.LeaderboardManager) return;
+
+    const rankings = LazyLegend.LeaderboardManager.getRankings(appState);
+    const userStanding = LazyLegend.LeaderboardManager.getUserStanding(appState);
+
+    if (standingPill) {
+      standingPill.textContent = `Rank #${userStanding} of ${rankings.length}`;
+    }
+
+    list.innerHTML = rankings.map(r => {
+      let medal = `#${r.rank}`;
+      if (r.rank === 1) medal = '🥇';
+      else if (r.rank === 2) medal = '🥈';
+      else if (r.rank === 3) medal = '🥉';
+
+      return `
+        <div class="leaderboard-item ${r.isCurrentUser ? 'user-item' : ''}">
+          <div class="lb-rank">${medal}</div>
+          <div class="lb-info">
+            <div class="lb-name-row">
+              <span class="lb-name">${escapeHtml(r.name)}</span>
+              ${r.isCurrentUser ? '<span class="lb-badge-you">YOU</span>' : ''}
+            </div>
+            <div class="lb-activity">${escapeHtml(r.activity)}</div>
+          </div>
+          <div class="lb-score">${r.score} pts</div>
+        </div>
+      `;
+    }).join('');
+  }
+
   function showBadgeToast(badge) {
     const toast = document.getElementById('badgeToast');
     const toastTitle = document.getElementById('badgeToastTitle');
@@ -132,6 +173,7 @@
     if (newlyUnlocked.length > 0) {
       LazyLegend.StorageManager.save(appState);
       renderBadges();
+      renderCertificate();
       newlyUnlocked.forEach(badge => showBadgeToast(badge));
     }
   }
@@ -162,6 +204,8 @@
     showPointPopup(50);
     updateRank(appState.score);
     renderConfessions();
+    renderCertificate();
+    renderLeaderboard();
     triggerConfetti('medium');
     checkMilestones();
 
@@ -182,6 +226,8 @@
     updateRank(appState.score);
     renderConfessions();
     renderBadges();
+    renderCertificate();
+    renderLeaderboard();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -201,6 +247,9 @@
     const confessionInput = document.getElementById('confessionInput');
     const btnPostpone = document.getElementById('btnPostpone');
     const btnRollExcuse = document.getElementById('btnRollExcuse');
+
+    // Certificate Copy DOM elements
+    const btnCopyCert = document.getElementById('btnCopyCert');
 
     // 2. Wire Confessional interactions
     if (btnPostpone && confessionInput) {
@@ -226,7 +275,25 @@
       });
     }
 
-    // 3. Instantiate Tracker FSM
+    // 3. Wire Certificate Clipboard Copy
+    if (btnCopyCert) {
+      btnCopyCert.addEventListener('click', async () => {
+        const text = LazyLegend.generateCertificateText(appState);
+        const success = await LazyLegend.copyToClipboard(text);
+        
+        btnCopyCert.classList.add('copied');
+        btnCopyCert.innerHTML = `<span>${success ? '✅ Copied to Clipboard! 🦥' : 'Press Ctrl+C to Copy!'}</span>`;
+        triggerConfetti('medium');
+
+        if (copyTimeout) clearTimeout(copyTimeout);
+        copyTimeout = setTimeout(() => {
+          btnCopyCert.classList.remove('copied');
+          btnCopyCert.innerHTML = `<span>📋 Copy Official Slacker Certificate</span>`;
+        }, 2200);
+      });
+    }
+
+    // 4. Instantiate Tracker FSM
     const tracker = new LazyLegend.ActivityTracker({
       idleThresholdMs: 2000,
       heartbeatMs: 1000,
@@ -242,6 +309,8 @@
         if (timerClock) timerClock.textContent = formatTime(streakSeconds);
         showPointPopup(1);
         updateRank(appState.score);
+        renderCertificate();
+        renderLeaderboard();
         checkMilestones();
       },
 
@@ -268,7 +337,7 @@
       }
     });
 
-    // 4. Reset Day Action
+    // 5. Reset Day Action
     if (btnResetDay) {
       btnResetDay.addEventListener('click', () => {
         appState = LazyLegend.StorageManager.reset();
@@ -283,6 +352,6 @@
     LazyLegend.getState = () => appState;
     LazyLegend.addConfession = addConfession;
     LazyLegend.checkMilestones = checkMilestones;
-    LazyLegend.triggerConfetti = triggerConfetti;
+    LazyLegend.renderState = renderState;
   });
 })();
