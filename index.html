@@ -47,13 +47,23 @@
         </div>
       </section>
 
-      <!-- Placeholder cards for upcoming slices -->
-      <section class="card" id="cardConfessional" style="opacity: 0.5;">
+      <!-- Card 2: Procrastination Confessional -->
+      <section class="card" id="cardConfessional">
         <div class="card-header">
           <h2 class="card-title">📝 Procrastination Confessional</h2>
-          <span style="font-size: 0.75rem; color: var(--ll-text-muted);">Coming in Slice 3</span>
+          <span class="status-pill" style="background: rgba(139, 92, 246, 0.15); color: var(--ll-accent-purple); border: 1px solid var(--ll-accent-purple);">+50 pts</span>
         </div>
-        <p style="color: var(--ll-text-muted); font-size: 0.88rem;">Task confessional & excuse roller will be wired in Slice 3.</p>
+        <div class="confessional-form">
+          <div class="input-group">
+            <input type="text" id="confessionInput" class="ll-input" placeholder="Enter chore to avoid (e.g. Write report, do laundry)...">
+            <button id="btnPostpone" class="btn-primary">Postpone (+50)</button>
+          </div>
+          <button id="btnRollExcuse" class="btn-secondary">🎲 Roll Random Corporate Excuse (+50)</button>
+        </div>
+        <div class="confessions-feed-header">Recent Avoidances</div>
+        <div class="confessions-list" id="confessionsList">
+          <div class="confession-empty" id="confessionEmpty">No effort detected yet. Outstanding.</div>
+        </div>
       </section>
 
       <section class="card" id="cardBadges" style="opacity: 0.5;">
@@ -74,8 +84,12 @@
     </main>
   </div>
 
+  <!-- CDN dependencies with offline fallbacks -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
   <!-- Scripts loaded in classic order for zero-build direct file:/// support -->
   <script src="js/state.js"></script>
+  <script src="js/excuses.js"></script>
   <script src="js/tracker.js"></script>
   <script src="js/app.js"></script>
 </body>
