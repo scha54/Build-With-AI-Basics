@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LazyLegend — Technical Spec Companion</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card-bg: rgba(17, 24, 39, 0.9);
+      --card-border: #374151;
+      --accent-gold: #f59e0b;
+      --accent-amber: #d97706;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #38bdf8;
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-stack);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container { max-width: 980px; margin: 0 auto; }
+
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1.5rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid var(--accent-gold);
+      padding: 0.25rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    .callout {
+      background: rgba(139, 92, 246, 0.08);
+      border-left: 4px solid var(--accent-purple);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    .callout strong { color: var(--accent-purple); }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.6rem 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+
+    .tab-btn.active {
+      color: #fff;
+      background: var(--card-bg);
+      border-color: var(--card-border);
+      border-bottom-color: var(--accent-gold);
+    }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      color: #fff;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: var(--accent-gold);
+      margin: 1.25rem 0 0.5rem 0;
+    }
+
+    p { color: var(--text); margin-bottom: 1rem; }
+
+    /* FSM Visualizer */
+    .fsm-canvas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .fsm-node {
+      background: #111827;
+      border: 2px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .fsm-node.active {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .fsm-node.violation {
+      border-color: var(--accent-red);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .fsm-title {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.35rem;
+      color: #fff;
+    }
+    .fsm-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Token Swatches */
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .token-swatch {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #111827;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+    }
+    .swatch-color {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      flex-shrink: 0;
+    }
+    .token-name {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #fff;
+    }
+    .token-val {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Tree */
+    .file-tree {
+      background: #06090e;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: #7dd3fc;
+    }
+    .tree-comment { color: #6b7280; }
+
+    /* Code Snippets */
+    pre {
+      background: #06090e;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #a78bfa;
+      overflow-x: auto;
+      margin-top: 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+    }
+    th, td {
+      border: 1px solid var(--card-border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    th {
+      background: #131924;
+      color: var(--accent-gold);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="status-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border-color: var(--accent-green);">● Status: Approved</div>
+      <h1>🦥 LazyLegend — Technical Spec Companion</h1>
+      <div class="tagline">Zero-build vanilla blueprint: FSM, Design Tokens, and Persistence Schema.</div>
+    </header>
+
+    <div class="callout">
+      <strong>Steering Focus & Technical Boundaries:</strong> Per your steering preferences, this specification locks down three strict boundaries to prevent agent drift: (1) a 4-state Finite State Machine governing idle and movement detection, (2) an explicit TypeScript-style <code>localStorage</code> schema with corrupted-data fallback, and (3) a full CSS design token contract that enforces the dark Linear/Stripe aesthetic.
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-fsm')">1. FSM & Idle Engine</button>
+      <button class="tab-btn" onclick="switchTab('tab-tokens')">2. Strict Design Tokens</button>
+      <button class="tab-btn" onclick="switchTab('tab-schema')">3. Storage & Data Model</button>
+      <button class="tab-btn" onclick="switchTab('tab-components')">4. Component Map & PRD</button>
+      <button class="tab-btn" onclick="switchTab('tab-files')">5. File Structure & Fallbacks</button>
+    </div>
+
+    <!-- TAB 1: FSM & IDLE ENGINE -->
+    <div id="tab-fsm" class="tab-pane active">
+      <div class="card">
+        <h2>⏱️ Idle & Movement Finite State Machine (FSM)</h2>
+        <p>The core stillness engine transitions between 4 deterministic states based on window events and timing thresholds:</p>
+
+        <div class="fsm-canvas">
+          <div id="node-input" class="fsm-node active" onclick="setFSMState('input')">
+            <div class="fsm-title">ACTIVE_INPUT</div>
+            <div class="fsm-desc">User typing / clicking. Timer paused.</div>
+          </div>
+          <div id="node-stillness" class="fsm-node" onclick="setFSMState('stillness')">
+            <div class="fsm-title">ACTIVE_STILLNESS</div>
+            <div class="fsm-desc">&ge; 2000ms idle. Pulsing green pill.</div>
+          </div>
+          <div id="node-tick" class="fsm-node" onclick="setFSMState('tick')">
+            <div class="fsm-title">STILLNESS_TICK</div>
+            <div class="fsm-desc">Every 1000ms: +1 pt to score & evaluate badges.</div>
+          </div>
+          <div id="node-violation" class="fsm-node" onclick="setFSMState('violation')">
+            <div class="fsm-title">MOVEMENT_VIOLATION</div>
+            <div class="fsm-desc">Input during stillness! Scolding banner appears.</div>
+          </div>
+        </div>
+
+        <div id="fsm-detail" style="background:#111827; border:1px solid var(--card-border); border-radius:8px; padding:1rem; font-size:0.9rem;">
+          <strong>State: ACTIVE_INPUT</strong> — The default state when the user is interacting with inputs. Score accumulation is paused, and the movement reprimand is hidden.
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: STRICT DESIGN TOKENS -->
+    <div id="tab-tokens" class="tab-pane">
+      <div class="card">
+        <h2>🎨 Strict CSS Custom Property Contracts</h2>
+        <p>All colors, surfaces, and borders are strictly locked to these CSS tokens in <code>styles.css</code>:</p>
+
+        <div class="token-grid">
+          <div class="token-swatch">
+            <div class="swatch-color" style="background:#0b0f17;"></div>
+            <div><div class="token-name">--ll-bg-base</div><div class="token-val">#0b0f17 (Charcoal Canvas)</div></div>
+          </div>
+          <div class="token-swatch">
+            <div class="swatch-color" style="background:#111827;"></div>
+            <div><div class="token-name">--ll-bg-surface</div><div class="token-val">#111827 (Card Surface)</div></div>
+          </div>
+          <div class="token-swatch">
+            <div class="swatch-color" style="background:#f59e0b;"></div>
+            <div><div class="token-name">--ll-accent-sloth-gold</div><div class="token-val">#f59e0b (Primary Brand)</div></div>
+          </div>
+          <div class="token-swatch">
+            <div class="swatch-color" style="background:#10b981;"></div>
+            <div><div class="token-name">--ll-accent-idle-green</div><div class="token-val">#10b981 (Zen Stillness)</div></div>
+          </div>
+          <div class="token-swatch">
+            <div class="swatch-color" style="background:#ef4444;"></div>
+            <div><div class="token-name">--ll-accent-sin-red</div><div class="token-val">#ef4444 (Cardinal Sin)</div></div>
+          </div>
+          <div class="token-swatch">
+            <div class="swatch-color" style="background:#8b5cf6;"></div>
+            <div><div class="token-name">--ll-accent-purple</div><div class="token-val">#8b5cf6 (Accolades & Badges)</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: STORAGE & DATA MODEL -->
+    <div id="tab-schema" class="tab-pane">
+      <div class="card">
+        <h2>💾 LocalStorage Schema Contract</h2>
+        <p>Single immutable-style state object stored under <code>lazylegend_state</code>:</p>
+
+        <pre><code>interface LazyLegendState {
+  version: 1;
+  score: number;             // Total Laziness Points (e.g., 250)
+  totalIdleSeconds: number;  // Cumulative seconds spent in stillness
+  longestStreak: number;     // Highest unbroken idle streak in seconds
+  confessions: Array&lt;{
+    id: string;
+    text: string;
+    timestamp: number;
+    pointsAwarded: number;
+  }&gt;;
+  unlockedBadgeIds: string[]; // e.g., ["speed_overrated", "tomorrows_problem"]
+  lastActiveTimestamp: number;
+}</code></pre>
+
+        <h3>Corrupted State & Safe Fallback</h3>
+        <p>If JSON parsing fails or the schema version does not match, <code>StorageManager</code> automatically loads the default zero-effort state without crashing:</p>
+        <pre><code>const DEFAULT_STATE = {
+  version: 1,
+  score: 0,
+  totalIdleSeconds: 0,
+  longestStreak: 0,
+  confessions: [],
+  unlockedBadgeIds: [],
+  lastActiveTimestamp: Date.now()
+};</code></pre>
+      </div>
+    </div>
+
+    <!-- TAB 4: COMPONENT MAP & PRD -->
+    <div id="tab-components" class="tab-pane">
+      <div class="card">
+        <h2>🧩 Component Architecture & PRD Traceability</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>JS Source File</th>
+              <th>PRD Heading Implemented</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ExecutiveHeader</strong></td>
+              <td><code>js/app.js</code></td>
+              <td><code>prd.md &gt; Screens and Layout &gt; Top Executive Header</code></td>
+            </tr>
+            <tr>
+              <td><strong>SlothTracker</strong></td>
+              <td><code>js/tracker.js</code></td>
+              <td><code>prd.md &gt; Sloth Mode Idle Tracker</code> &amp; <code>Cardinal Sin Reprimand</code></td>
+            </tr>
+            <tr>
+              <td><strong>Confessional</strong></td>
+              <td><code>js/confessions.js</code></td>
+              <td><code>prd.md &gt; Procrastination Confessional &amp; Excuse Generator</code></td>
+            </tr>
+            <tr>
+              <td><strong>BadgeManager</strong></td>
+              <td><code>js/badges.js</code></td>
+              <td><code>prd.md &gt; Badges &amp; Accolades</code></td>
+            </tr>
+            <tr>
+              <td><strong>SlackerCertificate</strong></td>
+              <td><code>js/certificate.js</code></td>
+              <td><code>prd.md &gt; Slacker Certificate Action Card</code></td>
+            </tr>
+            <tr>
+              <td><strong>Leaderboard</strong></td>
+              <td><code>js/leaderboard.js</code></td>
+              <td><code>prd.md &gt; Mock Enterprise Leaderboard</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 5: FILE STRUCTURE & FALLBACKS -->
+    <div id="tab-files" class="tab-pane">
+      <div class="card">
+        <h2>📁 Planned File Structure & Fallbacks</h2>
+        <div class="file-tree">
+          c:/Build/Antigravity/Build With AI Basics/<br>
+          ├── devpost/                  <span class="tree-comment"># Planning artifacts (profile, scope, prd, spec)</span><br>
+          ├── index.html                <span class="tree-comment"># Semantic zero-build HTML dashboard</span><br>
+          ├── styles.css                <span class="tree-comment"># Strict CSS design token contracts</span><br>
+          ├── js/<br>
+          │   ├── state.js              <span class="tree-comment"># Schema, StorageManager, Default State</span><br>
+          │   ├── excuses.js            <span class="tree-comment"># 18 corporate excuse strings library</span><br>
+          │   ├── tracker.js            <span class="tree-comment"># Idle/Movement FSM & event listeners</span><br>
+          │   ├── badges.js             <span class="tree-comment"># 4 badge definitions & unlock logic</span><br>
+          │   ├── certificate.js        <span class="tree-comment"># Clipboard formatting & copy logic</span><br>
+          │   ├── leaderboard.js        <span class="tree-comment"># Mock coworker rankings & dynamic reorder</span><br>
+          │   └── app.js                <span class="tree-comment"># Main DOM orchestrator</span><br>
+          └── README.md                 <span class="tree-comment"># Quickstart & Demo recording steps</span>
+        </div>
+
+        <h3>Important Fallbacks</h3>
+        <p>• <strong>Direct <code>file:///</code> Launch:</strong> Scripts avoid ES6 <code>type="module"</code> to bypass local browser CORS policy blocks when opened directly from disk.</p>
+        <p>• <strong>Clipboard API Fallback:</strong> If browser privacy blocks <code>navigator.clipboard</code>, falls back to a select-all text modal.</p>
+        <p>• <strong>Offline Confetti:</strong> If CDN is unavailable, an inline CSS particle animation triggers on unlock.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    const fsmDetails = {
+      input: "<strong>State: ACTIVE_INPUT</strong> — The user is typing or clicking. Score accumulation is paused, and the movement reprimand is hidden.",
+      stillness: "<strong>State: ACTIVE_STILLNESS</strong> — 2000ms have elapsed with zero input. The sloth enters Zen Stillness; status pill pulses green.",
+      tick: "<strong>State: STILLNESS_TICK</strong> — Fired on a 1000ms heartbeat interval while in stillness. Adds +1 pt to score and evaluates badge milestones.",
+      violation: "<strong>State: MOVEMENT_VIOLATION</strong> — Triggered immediately if the user touches the mouse or keyboard while in stillness. Displays the deadpan reprimand banner."
+    };
+
+    function setFSMState(stateKey) {
+      document.querySelectorAll('.fsm-node').forEach(n => {
+        n.classList.remove('active');
+        n.classList.remove('violation');
+      });
+      const node = document.getElementById('node-' + stateKey);
+      if (stateKey === 'violation') {
+        node.classList.add('violation');
+      } else {
+        node.classList.add('active');
+      }
+      document.getElementById('fsm-detail').innerHTML = fsmDetails[stateKey];
+    }
+  </script>
+</body>
+</html>

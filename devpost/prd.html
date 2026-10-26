@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LazyLegend — PRD Interactive Companion</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card-bg: rgba(22, 27, 34, 0.9);
+      --card-border: #30363d;
+      --accent-amber: #f59e0b;
+      --accent-sloth: #d97706;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #38bdf8;
+      --text: #e6edf3;
+      --text-muted: #94a3b8;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1.5rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid var(--accent-amber);
+      padding: 0.25rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    /* Expansion Callout */
+    .callout {
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 4px solid var(--accent-blue);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    .callout strong {
+      color: var(--accent-blue);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.6rem 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      background: var(--card-bg);
+      border-color: var(--card-border);
+      border-bottom-color: var(--accent-amber);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      color: #fff;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: var(--accent-amber);
+      margin: 1.25rem 0 0.5rem 0;
+    }
+
+    p {
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    /* Stepper / Core Journey */
+    .journey-stepper {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .step-box {
+      background: #131924;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      position: relative;
+    }
+    .step-box .num {
+      position: absolute;
+      top: -10px;
+      left: 12px;
+      background: var(--accent-amber);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .step-box h4 {
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+      margin-top: 0.2rem;
+    }
+    .step-box p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Interactive Wireframe Preview */
+    .wireframe-container {
+      background: #0f141d;
+      border: 1px dashed var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .mock-header {
+      background: #171f2d;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .mock-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .mock-card {
+      background: #161d2a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mock-card:hover, .mock-card.selected {
+      border-color: var(--accent-amber);
+      transform: translateY(-2px);
+    }
+
+    .mock-card-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .mock-badge-tag {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+    }
+
+    /* Live Preview Simulator */
+    .simulator-box {
+      background: #101622;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .sim-btn {
+      background: var(--accent-amber);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .sim-btn.secondary {
+      background: #212b3b;
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+    .sim-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Checklist */
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.95rem;
+    }
+    .checklist-item input {
+      margin-top: 0.25rem;
+      accent-color: var(--accent-green);
+    }
+
+    /* Code Snippet */
+    pre {
+      background: #06090e;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #7dd3fc;
+      overflow-x: auto;
+      margin-top: 0.75rem;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid var(--card-border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    th {
+      background: #131924;
+      color: var(--accent-amber);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="status-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border-color: var(--accent-green);">● Status: Approved</div>
+      <h1>🦥 LazyLegend — PRD Review Companion</h1>
+      <div class="tagline">Interactive specification for the deadpan corporate anti-productivity tracker.</div>
+    </header>
+
+    <div class="callout">
+      <strong>Scope to PRD Expansion:</strong> Scope established the core premise (*"reward laziness and deadpan corporate praise"*). This PRD specifies the exact math (+1 pt/sec stillness, +50 pt confessional bonuses), the 5-card dashboard architecture, the Cardinal Sin reprimand mechanics, 4 verifiable badges, dynamic leaderboard re-ranking, and the 1-click clipboard certificate format.
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-journey')">1. The Core Journey</button>
+      <button class="tab-btn" onclick="switchTab('tab-layout')">2. Dashboard Wireframe</button>
+      <button class="tab-btn" onclick="switchTab('tab-criteria')">3. Acceptance Criteria</button>
+      <button class="tab-btn" onclick="switchTab('tab-states')">4. States & Boundaries</button>
+      <button class="tab-btn" onclick="switchTab('tab-decisions')">5. Product Decisions</button>
+    </div>
+
+    <!-- TAB 1: THE CORE JOURNEY -->
+    <div id="tab-journey" class="tab-pane active">
+      <div class="card">
+        <h2>🗺️ End-to-End User Journey</h2>
+        <p>A complete 60-second walkthrough from first arrival to bragging rights:</p>
+        
+        <div class="journey-stepper">
+          <div class="step-box">
+            <span class="num">01</span>
+            <h4>Executive Greeting</h4>
+            <p>Arrive to sleepy sloth mascot and deadpan praise: <em>"Inactive for 12 seconds. Outstanding leadership."</em></p>
+          </div>
+          <div class="step-box">
+            <span class="num">02</span>
+            <h4>Sloth Mode (Stillness)</h4>
+            <p>Sit back untouched. Live counter increments and awards <strong>+1 pt/sec</strong> to Laziness Score.</p>
+          </div>
+          <div class="step-box">
+            <span class="num">03</span>
+            <h4>The Cardinal Sin</h4>
+            <p>Accidentally move mouse or type: counter pauses, flashing red warning: <em>"Unauthorized Effort Detected!"</em></p>
+          </div>
+          <div class="step-box">
+            <span class="num">04</span>
+            <h4>The Confessional</h4>
+            <p>Confess an avoided chore or roll an absurd excuse (e.g., <em>"Aligning nap schedule with stakeholders"</em>).</p>
+          </div>
+          <div class="step-box">
+            <span class="num">05</span>
+            <h4>Confetti & Badges</h4>
+            <p>Scolded for mechanical effort, but granted <strong>+50 pts bonus</strong> and milestone badges unlock.</p>
+          </div>
+          <div class="step-box">
+            <span class="num">06</span>
+            <h4>Official Certificate</h4>
+            <p>1-click copy formatted slacker audit report with emojis to paste straight into Slack or Discord.</p>
+          </div>
+        </div>
+
+        <h3>Interactive Journey Simulator</h3>
+        <p>Test the scoring and cardinal sin feedback loop right now:</p>
+        <div class="simulator-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div>
+              <span style="font-size:0.85rem; color:var(--text-muted);">Current Laziness Score:</span>
+              <div id="sim-score" style="font-size:1.8rem; font-weight:800; color:var(--accent-amber);">0 pts</div>
+            </div>
+            <div id="sim-status" style="font-size:0.85rem; padding:4px 10px; border-radius:999px; background:rgba(16,185,129,0.15); color:var(--accent-green); border:1px solid var(--accent-green);">
+              ● Sloth Mode: Zen Stillness
+            </div>
+          </div>
+          <button class="sim-btn" onclick="simIdle(5)">⏳ Sit Still (+5s / +5 pts)</button>
+          <button class="sim-btn secondary" onclick="simMove()">⚠️ Commit Cardinal Sin (Move Mouse)</button>
+          <button class="sim-btn" style="background:var(--accent-purple); color:#fff;" onclick="simExcuse()">🦥 Roll Excuse (+50 pts & Confetti)</button>
+          <div id="sim-banner" style="display:none; margin-top:0.75rem; padding:0.6rem 1rem; border-radius:6px; background:rgba(239,68,68,0.15); border:1px solid var(--accent-red); color:#fca5a5; font-size:0.88rem;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DASHBOARD WIREFRAME -->
+    <div id="tab-layout" class="tab-pane">
+      <div class="card">
+        <h2>🖥️ Dashboard Layout Specification</h2>
+        <p>A single-page dark mode layout structured into a primary executive header and 5 functional cards:</p>
+        
+        <div class="wireframe-container">
+          <!-- Mock Header -->
+          <div class="mock-header">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span style="font-size:2rem;">🦥</span>
+              <div>
+                <div style="font-weight:700; color:#fff;">Executive Sloth Desk</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">Level 2: Intermediate Postponist</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Laziness Score</div>
+              <div style="font-size:1.5rem; font-weight:800; color:var(--accent-amber);">480 pts</div>
+            </div>
+          </div>
+
+          <!-- Mock Grid Cards -->
+          <div class="mock-grid">
+            <div class="mock-card selected" onclick="selectCardInfo('sloth')">
+              <div class="mock-card-title">
+                <span>⏱️ Sloth Mode Tracker</span>
+                <span class="mock-badge-tag">+1 pt / sec</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Live unbroken stillness counter & movement detection banner.</p>
+            </div>
+
+            <div class="mock-card" onclick="selectCardInfo('confessional')">
+              <div class="mock-card-title">
+                <span>📝 Procrastination Confessional</span>
+                <span class="mock-badge-tag">+50 pts</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Input avoided tasks or roll from 15+ absurd corporate excuses.</p>
+            </div>
+
+            <div class="mock-card" onclick="selectCardInfo('badges')">
+              <div class="mock-card-title">
+                <span>🏆 Badges & Accolades</span>
+                <span class="mock-badge-tag">4 Badges</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Instant gratification confetti popups on milestone unlock.</p>
+            </div>
+
+            <div class="mock-card" onclick="selectCardInfo('certificate')">
+              <div class="mock-card-title">
+                <span>📜 Slacker Certificate</span>
+                <span class="mock-badge-tag">1-Click Copy</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Live preview & instant clipboard formatted text for Slack/Discord.</p>
+            </div>
+
+            <div class="mock-card" onclick="selectCardInfo('leaderboard')">
+              <div class="mock-card-title">
+                <span>📊 Colleague Leaderboard</span>
+                <span class="mock-badge-tag">Dynamic</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Real-time ranking against 4 fictional corporate slackers.</p>
+            </div>
+          </div>
+
+          <div id="card-detail-box" style="margin-top:1rem; padding:1rem; background:#121824; border-radius:8px; border:1px solid var(--card-border); font-size:0.88rem;">
+            <strong>Card 1 Detail: Sloth Mode Tracker</strong> — Monitors window events without requiring user click to start. Enters Active Stillness after 2 seconds of zero input.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ACCEPTANCE CRITERIA -->
+    <div id="tab-criteria" class="tab-pane">
+      <div class="card">
+        <h2>✅ Verifiable Acceptance Criteria</h2>
+        <p>Specific, observable behaviors testable by looking at the screen during the build:</p>
+        
+        <h3>1. Sloth Mode Idle Tracker</h3>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Leaving input untouched for 5 seconds adds exactly 5 points to the Laziness Score.</span></div>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Timer displays unbroken idle minutes/seconds in real-time.</span></div>
+
+        <h3>2. Cardinal Sin Movement Reprimand</h3>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Moving the mouse or pressing a key while in stillness pauses the timer and surfaces a sarcastic warning within 300ms.</span></div>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Reprimand banner cleanly clears once stillness resumes.</span></div>
+
+        <h3>3. Procrastination Confessional</h3>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Typing an avoided task and clicking "Postpone" logs the item, awards +50 pts, and bursts confetti.</span></div>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Clicking "Roll Random Excuse" selects from 15+ absurd excuses, displays a typing reprimand, and awards +50 pts.</span></div>
+
+        <h3>4. Badges & Milestone Rewards</h3>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>30 seconds unbroken stillness unlocks <strong>"Speed Is Overrated"</strong>.</span></div>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Reaching 500 total points unlocks <strong>"Supreme Couch Commander"</strong>.</span></div>
+
+        <h3>5. 1-Click Clipboard Certificate</h3>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Clicking "Copy Certificate" copies formatted text with emojis, current score, and latest excuse to clipboard.</span></div>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>Copy button displays immediate confirmation ("Copied to Clipboard! 🦥").</span></div>
+
+        <h3>6. Dynamic Leaderboard</h3>
+        <div class="checklist-item"><input type="checkbox" checked disabled> <span>When user score crosses 340 points, their position automatically hops above Alex Rivera.</span></div>
+      </div>
+    </div>
+
+    <!-- TAB 4: STATES & BOUNDARIES -->
+    <div id="tab-states" class="tab-pane">
+      <div class="card">
+        <h2>🔄 States & Boundaries</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>Trigger</th>
+              <th>Observed UI Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>First Visit</strong></td>
+              <td>Fresh browser session</td>
+              <td>Score is 0 pts (Level 1 Novice), all badges locked, confessional placeholder says <em>"No effort detected yet. Excellent."</em></td>
+            </tr>
+            <tr>
+              <td><strong>Active Stillness</strong></td>
+              <td>2+ seconds with no mouse/keys</td>
+              <td>Green status badge pulses, counter ticks up every second, +1 floating numbers climb.</td>
+            </tr>
+            <tr>
+              <td><strong>Violation State</strong></td>
+              <td>Mouse movement or keypress</td>
+              <td>Red reprimand banner appears, counter pauses, points stop accumulating.</td>
+            </tr>
+            <tr>
+              <td><strong>Persistence</strong></td>
+              <td>Page refresh / reopen</td>
+              <td>Current score, unlocked badges, and recent confessions are restored from <code>localStorage</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>Clipboard Fallback</strong></td>
+              <td>Clipboard permission denied</td>
+              <td>Selectable modal text box pops up with "Press Ctrl+C to copy your certificate".</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 5: PRODUCT DECISIONS -->
+    <div id="tab-decisions" class="tab-pane">
+      <div class="card">
+        <h2>⚖️ Product Decisions & POC Boundaries</h2>
+        
+        <h3>Decisions & Rationale</h3>
+        <p>• <strong>Automatic Inactivity Tracking:</strong> Avoids requiring the user to click "Start" before slacking off—making inaction truly zero-effort.</p>
+        <p>• <strong>The Effort Paradox:</strong> Typing an excuse triggers the "Cardinal Sin" scolding for physical effort, but awards +50 pts bonus to heighten the comedic irony.</p>
+        <p>• <strong>Emoji Text Certificate:</strong> Output is optimized for immediate paste into Slack, Teams, and Discord without image file download friction.</p>
+
+        <h3>The POC Split</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>In the Proof of Concept (Now)</th>
+              <th>Deferred (Later)</th>
+              <th>Explicitly Cut (Non-Goals)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>• 5-card dark responsive dashboard</td>
+              <td>• Live multi-user WebSocket sync</td>
+              <td>• No Jira/Google Calendar sync</td>
+            </tr>
+            <tr>
+              <td>• Automatic idle tracker (+1 pt/s)</td>
+              <td>• Native OS screen time hooks</td>
+              <td>• No user account/auth walls</td>
+            </tr>
+            <tr>
+              <td>• Movement reprimand banner</td>
+              <td>• Push notifications on tab exit</td>
+              <td>• No invasive background spyware</td>
+            </tr>
+            <tr>
+              <td>• Confessional + 15 random excuses</td>
+              <td>• Custom mascot selection</td>
+              <td>• No paid enterprise monetization</td>
+            </tr>
+            <tr>
+              <td>• 4 badges with confetti & local storage</td>
+              <td>• Automated Slack bot integration</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    let score = 0;
+    function simIdle(sec) {
+      score += sec;
+      document.getElementById('sim-score').innerText = score + ' pts';
+      document.getElementById('sim-status').innerText = '● Sloth Mode: Zen Stillness';
+      document.getElementById('sim-status').style.color = '#10b981';
+      document.getElementById('sim-status').style.borderColor = '#10b981';
+      document.getElementById('sim-banner').style.display = 'none';
+    }
+
+    function simMove() {
+      document.getElementById('sim-status').innerText = '⚠️ CARDINAL SIN: Unsanctioned Movement';
+      document.getElementById('sim-status').style.color = '#ef4444';
+      document.getElementById('sim-status').style.borderColor = '#ef4444';
+      const banner = document.getElementById('sim-banner');
+      banner.style.display = 'block';
+      banner.innerHTML = '🚨 <strong>UNAUTHORIZED EFFORT DETECTED:</strong> Put down the mouse before someone accidentally gives you a task!';
+    }
+
+    function simExcuse() {
+      score += 50;
+      document.getElementById('sim-score').innerText = score + ' pts';
+      const excuses = [
+        "Awaiting stakeholder alignment on my nap schedule.",
+        "Refactoring my motivation in staging.",
+        "Blocked by internal inertia.",
+        "Conducting an asynchronous mental audit of the ceiling."
+      ];
+      const randomExcuse = excuses[Math.floor(Math.random() * excuses.length)];
+      const banner = document.getElementById('sim-banner');
+      banner.style.display = 'block';
+      banner.innerHTML = `🦥 <strong>CARDINAL SIN OF TYPING (+50 pts):</strong> You exerted mechanical effort to confess: <em>"${randomExcuse}"</em>. The sloth approves.`;
+    }
+
+    const cardDetails = {
+      sloth: "<strong>Card 1 Detail: Sloth Mode Tracker</strong> — Monitors window events without requiring user click to start. Enters Active Stillness after 2 seconds of zero input.",
+      confessional: "<strong>Card 2 Detail: Procrastination Confessional</strong> — Allows entering a custom chore or rolling one of 15+ built-in excuses, awarding +50 pts bonus each time.",
+      badges: "<strong>Card 3 Detail: Badges & Accolades</strong> — 4 distinct badges (Speed Is Overrated, Tomorrow's Problem, Master of Delegation, Supreme Couch Commander) unlocked by verifiable triggers.",
+      certificate: "<strong>Card 4 Detail: Slacker Certificate</strong> — Live preview card with a high-visibility copy button that formats a formatted emoji report card to the clipboard.",
+      leaderboard: "<strong>Card 5 Detail: Colleague Leaderboard</strong> — Ranked comparison against 4 mock coworkers that dynamically re-orders as your score overtakes them."
+    };
+
+    function selectCardInfo(cardKey) {
+      document.querySelectorAll('.mock-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      document.getElementById('card-detail-box').innerHTML = cardDetails[cardKey];
+    }
+  </script>
+</body>
+</html>

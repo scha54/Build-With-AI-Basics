@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LazyLegend — Project Scope Companion</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: rgba(22, 27, 34, 0.85);
+      --card-border: #30363d;
+      --accent-green: #3fb950;
+      --accent-purple: #a371f7;
+      --accent-amber: #d29922;
+      --accent-blue: #58a6ff;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1.5rem;
+    }
+
+    .badge-approved {
+      display: inline-block;
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--accent-green);
+      border: 1px solid var(--accent-green);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(8px);
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      color: #fff;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    p {
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    /* Diagram Styles */
+    .diagram-container {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+
+    svg {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Interactive Reveal Tabs */
+    .boundary-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      background: rgba(88, 166, 255, 0.15);
+      border: 1px solid var(--accent-blue);
+    }
+
+    .reveal-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .reveal-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    ul.item-list {
+      list-style: none;
+    }
+
+    ul.item-list li {
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-blue);
+      display: flex;
+      flex-direction: column;
+    }
+
+    ul.item-list li strong {
+      color: #fff;
+    }
+
+    ul.item-list li span {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    ul.item-list.now li { border-left-color: var(--accent-green); }
+    ul.item-list.later li { border-left-color: var(--accent-amber); }
+    ul.item-list.cut li { border-left-color: #f85149; }
+
+    /* Demo Steps */
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+      position: relative;
+    }
+
+    .step-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .step-title {
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 3rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge-approved">Status: Approved</div>
+      <h1>🦥 LazyLegend</h1>
+      <p class="tagline">An anti-productivity tracker rewarding unproductivity with deadpan corporate praise.</p>
+    </header>
+
+    <!-- The Kernel -->
+    <section class="card">
+      <h2>🎯 The Unique Kernel</h2>
+      <p>
+        <strong>Deadpan inversion of serious productivity dashboards:</strong> Taking underachievement with absolute corporate seriousness. Measuring idle time, tasks avoided, and excuses invented, converting pure downtime into an absurdly competitive sport.
+      </p>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        <strong>Design principle:</strong> 3 seconds to understand, 10 seconds to smile, 30 seconds to produce something funny to send to a friend.
+      </p>
+    </section>
+
+    <!-- Visual Architecture / Flow Diagram -->
+    <section class="card">
+      <h2>🔄 The Core Loop Architecture</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted);">How a friend experiences the satirical loop from entry to viral share:</p>
+      <div class="diagram-container">
+        <svg viewBox="0 0 760 210" width="100%" height="210" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#58a6ff"/>
+            </marker>
+          </defs>
+
+          <!-- Step 1 -->
+          <rect x="10" y="50" width="160" height="90" rx="8" fill="#1f242c" stroke="#30363d" stroke-width="1.5"/>
+          <text x="90" y="80" fill="#58a6ff" font-size="12" font-weight="bold" text-anchor="middle">1. ENTRY</text>
+          <text x="90" y="102" fill="#ffffff" font-size="13" font-weight="600" text-anchor="middle">Daily Dashboard</text>
+          <text x="90" y="122" fill="#8b949e" font-size="11" text-anchor="middle">Sleepy Sloth Greeting</text>
+
+          <line x1="170" y1="95" x2="200" y2="95" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- Step 2 -->
+          <rect x="205" y="50" width="165" height="90" rx="8" fill="#1f242c" stroke="#30363d" stroke-width="1.5"/>
+          <text x="287" y="80" fill="#a371f7" font-size="12" font-weight="bold" text-anchor="middle">2. INACTION LOOP</text>
+          <text x="287" y="102" fill="#ffffff" font-size="13" font-weight="600" text-anchor="middle">Sloth Mode / Confession</text>
+          <text x="287" y="122" fill="#8b949e" font-size="11" text-anchor="middle">Timer &amp; Excuse Gen</text>
+
+          <line x1="370" y1="95" x2="400" y2="95" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- Step 3 -->
+          <rect x="405" y="50" width="160" height="90" rx="8" fill="#1f242c" stroke="#30363d" stroke-width="1.5"/>
+          <text x="485" y="80" fill="#3fb950" font-size="12" font-weight="bold" text-anchor="middle">3. CELEBRATION</text>
+          <text x="485" y="102" fill="#ffffff" font-size="13" font-weight="600" text-anchor="middle">Score &amp; Badges</text>
+          <text x="485" y="122" fill="#8b949e" font-size="11" text-anchor="middle">Confetti &amp; Accolades</text>
+
+          <line x1="565" y1="95" x2="595" y2="95" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- Step 4 -->
+          <rect x="600" y="50" width="150" height="90" rx="8" fill="#1f242c" stroke="#d29922" stroke-width="1.5"/>
+          <text x="675" y="80" fill="#d29922" font-size="12" font-weight="bold" text-anchor="middle">4. PROOF / VIRAL</text>
+          <text x="675" y="102" fill="#ffffff" font-size="13" font-weight="600" text-anchor="middle">Slacker Certificate</text>
+          <text x="675" y="122" fill="#8b949e" font-size="11" text-anchor="middle">1-Click Share to Chat</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Proof of Concept Boundary: Interactive Reveals -->
+    <section class="card">
+      <h2>📦 Proof of Concept Boundary</h2>
+      <div class="boundary-tabs">
+        <button class="tab-btn active" onclick="showTab('now')">Now (PoC Core)</button>
+        <button class="tab-btn" onclick="showTab('later')">Later (Post-Hackathon)</button>
+        <button class="tab-btn" onclick="showTab('cut')">Explicitly Cut</button>
+      </div>
+
+      <!-- Now -->
+      <div id="tab-now" class="reveal-content active">
+        <ul class="item-list now">
+          <li>
+            <strong>Daily Laziness Dashboard</strong>
+            <span>Live Laziness Score, sleepy sloth corporate greeting, and key underachievement stats.</span>
+          </li>
+          <li>
+            <strong>Sloth Mode Inactivity Timer</strong>
+            <span>Active in-browser timer rewarding minutes of pure, uninterrupted stillness.</span>
+          </li>
+          <li>
+            <strong>Procrastination Confessional &amp; Excuse Generator</strong>
+            <span>Quick-log avoided tasks or roll instant hilarious corporate excuses for slacking.</span>
+          </li>
+          <li>
+            <strong>Absurd Badge System</strong>
+            <span>Instant celebratory confetti upon unlocking badges like "Supreme Couch Commander" and "Tomorrow's Problem".</span>
+          </li>
+          <li>
+            <strong>Official Slacker Certificate</strong>
+            <span>1-click formatted clipboard export ("LAZYLEGEND • A+ Outstanding Underachievement").</span>
+          </li>
+          <li>
+            <strong>Local Mock Friends Leaderboard</strong>
+            <span>Pre-seeded fictional slackers competing for top underachievement honours.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Later -->
+      <div id="tab-later" class="reveal-content">
+        <ul class="item-list later">
+          <li>
+            <strong>Real-time Multi-user Group Sync</strong>
+            <span>Live backend syncing so actual friend circles can compete on a shared leaderboard.</span>
+          </li>
+          <li>
+            <strong>Native OS Screen-time &amp; Inactivity Hooks</strong>
+            <span>Platform background telemetry with explicit user permissions.</span>
+          </li>
+          <li>
+            <strong>Exit Push Notifications</strong>
+            <span>"Too much effort? Understandable. +50 points awarded."</span>
+          </li>
+          <li>
+            <strong>Weekly Slacker Oscar Ceremony</strong>
+            <span>Cinematic animated weekly awards for low effort.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Cut -->
+      <div id="tab-cut" class="reveal-content">
+        <ul class="item-list cut">
+          <li>
+            <strong>Invasive Background Surveillance</strong>
+            <span>No covert keylogging or activity stalking—keeps it lighthearted and self-reported.</span>
+          </li>
+          <li>
+            <strong>Mandatory Account Auth &amp; Login Walls</strong>
+            <span>Avoids killing the 30-second time-to-delight.</span>
+          </li>
+          <li>
+            <strong>Real Productivity Integrations (Jira, Google Calendar)</strong>
+            <span>Defeats the satirical, feel-good soul of the app.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- What Working Looks Like -->
+    <section class="card">
+      <h2>🎬 What "Working" Looks Like (60-sec Demo)</h2>
+      <div class="step-grid">
+        <div class="step-card">
+          <div class="step-num">Step 1</div>
+          <div class="step-title">Dashboard Greeting</div>
+          <div class="step-desc">Open app, see 847/1000 score and deadpan greeting praising inactivity.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">Step 2</div>
+          <div class="step-title">Trigger Sloth Mode</div>
+          <div class="step-desc">Inactivity timer ticks up with live slacker encouragement.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">Step 3</div>
+          <div class="step-title">Confess &amp; Pop Confetti</div>
+          <div class="step-desc">Log a postponed chore or roll an excuse to unlock "Supreme Couch Commander".</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">Step 4</div>
+          <div class="step-title">Copy Certificate</div>
+          <div class="step-desc">Click "Copy Report Card" to grab the shareable A+ underachievement badge.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Devpost Learn • Build With AI: Basics • <code>devpost/scope.html</code>
+    </footer>
+  </div>
+
+  <script>
+    function showTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.reveal-content').forEach(c => c.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById('tab-' + name).classList.add('active');
+    }
+  </script>
+</body>
+</html>

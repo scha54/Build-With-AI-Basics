@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LazyLegend — Corporate Anti-Productivity Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 1. Executive Header -->
+    <header class="executive-header">
+      <div class="header-left">
+        <div class="sloth-avatar" id="slothAvatar">🦥</div>
+        <div class="title-group">
+          <h1>LazyLegend <span style="font-size: 0.85rem; opacity: 0.7; font-weight: normal;">Enterprise</span></h1>
+          <div class="rank-badge" id="userRankBadge">Level 1: Novice Procrastinator</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="score-display">
+          <span class="score-label">Laziness Score</span>
+          <span class="score-value" id="scoreDisplay">0</span>
+          <div id="scorePopup" class="score-popup">+1</div>
+        </div>
+        <button id="btnResetDay" class="btn-reset" title="Reset all current progress">Reset Day</button>
+      </div>
+    </header>
+
+    <!-- 2. Main Dashboard Grid -->
+    <main class="dashboard-grid">
+      <!-- Card 1: Sloth Mode Tracker -->
+      <section class="card" id="cardSlothTracker">
+        <div class="card-header">
+          <h2 class="card-title">⏱️ Sloth Mode Tracker</h2>
+          <span class="status-pill input" id="statusPill">Active Input</span>
+        </div>
+        <div class="timer-container">
+          <div class="timer-label">Unbroken Inactivity Streak</div>
+          <div class="timer-clock" id="timerClock">00:00:00</div>
+          <div class="timer-rate" id="timerRate">+1 pt / second of pure stillness</div>
+        </div>
+        <!-- Movement Violation Banner -->
+        <div class="reprimand-banner" id="reprimandBanner">
+          <strong>🚨 Unauthorized Effort Detected</strong>
+          <span id="reprimandText">Put down the mouse before someone promotes you.</span>
+        </div>
+      </section>
+
+      <!-- Placeholder cards for upcoming slices -->
+      <section class="card" id="cardConfessional" style="opacity: 0.5;">
+        <div class="card-header">
+          <h2 class="card-title">📝 Procrastination Confessional</h2>
+          <span style="font-size: 0.75rem; color: var(--ll-text-muted);">Coming in Slice 3</span>
+        </div>
+        <p style="color: var(--ll-text-muted); font-size: 0.88rem;">Task confessional & excuse roller will be wired in Slice 3.</p>
+      </section>
+
+      <section class="card" id="cardBadges" style="opacity: 0.5;">
+        <div class="card-header">
+          <h2 class="card-title">🏆 Badges & Accolades</h2>
+          <span style="font-size: 0.75rem; color: var(--ll-text-muted);">Coming in Slice 4</span>
+        </div>
+        <p style="color: var(--ll-text-muted); font-size: 0.88rem;">Milestone achievements will be wired in Slice 4.</p>
+      </section>
+
+      <section class="card" id="cardCertificate" style="opacity: 0.5;">
+        <div class="card-header">
+          <h2 class="card-title">📜 Slacker Certificate</h2>
+          <span style="font-size: 0.75rem; color: var(--ll-text-muted);">Coming in Slice 5</span>
+        </div>
+        <p style="color: var(--ll-text-muted); font-size: 0.88rem;">1-click clipboard export will be wired in Slice 5.</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts loaded in classic order for zero-build direct file:/// support -->
+  <script src="js/tracker.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
