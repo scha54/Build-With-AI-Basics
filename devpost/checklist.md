@@ -19,7 +19,7 @@ Build mode: learn
   Learner check: Open `index.html` in your browser. Leave your mouse still for 5 seconds to watch points climb, then nudge your mouse or tap a key to verify the sloth's reprimand appears.
   Commit: `Bootstrap app and implement core idle FSM with movement reprimand`
 
-- [ ] **2. LocalStorage State Persistence & Session Reset**
+- [x] **2. LocalStorage State Persistence & Session Reset**
   Becomes usable: Your Laziness Score, unbroken idle streak, and session stats persist across page refreshes, with a "Reset Day" button to clear state.
   Why now: Data integrity is the foundation for badges, confessions, and certificates. Verifying persistence now ensures later features save reliably.
   PRD ref: `prd.md > States and Boundaries > Persistence State`
@@ -29,7 +29,7 @@ Build mode: learn
   Learner check: Sit still until your score hits 10+, refresh the browser tab, and verify your score is still 10+; then click "Reset Day" to verify it zeroes out.
   Commit: `Add localStorage state persistence and reset handler`
 
-- [ ] **3. Procrastination Confessional & Random Excuse Generator**
+- [x] **3. Procrastination Confessional & Random Excuse Generator**
   Becomes usable: You can type an avoided chore or roll from 18 absurd corporate excuses, each awarding +50 points, popping celebratory confetti, and scolding you for physical effort.
   Why now: Adds the active comedic counterpart to idle accumulation, introducing the +50 point bonus mechanics and confetti celebrations.
   PRD ref: `prd.md > Features and Behavior > Procrastination Confessional & Excuse Generator`
