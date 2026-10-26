@@ -66,14 +66,18 @@
         </div>
       </section>
 
-      <section class="card" id="cardBadges" style="opacity: 0.5;">
+      <!-- Card 3: Badges & Accolades -->
+      <section class="card" id="cardBadges">
         <div class="card-header">
           <h2 class="card-title">🏆 Badges & Accolades</h2>
-          <span style="font-size: 0.75rem; color: var(--ll-text-muted);">Coming in Slice 4</span>
+          <span class="status-pill" id="badgesCountBadge" style="background: rgba(245, 158, 11, 0.15); color: var(--ll-accent-sloth-gold); border: 1px solid var(--ll-accent-sloth-gold);">0 / 4 Unlocked</span>
         </div>
-        <p style="color: var(--ll-text-muted); font-size: 0.88rem;">Milestone achievements will be wired in Slice 4.</p>
+        <div class="badges-grid" id="badgesGrid">
+          <!-- Rendered dynamically by js/app.js -->
+        </div>
       </section>
 
+      <!-- Placeholder card for Slice 5 -->
       <section class="card" id="cardCertificate" style="opacity: 0.5;">
         <div class="card-header">
           <h2 class="card-title">📜 Slacker Certificate</h2>
@@ -84,12 +88,20 @@
     </main>
   </div>
 
+  <!-- Badge Celebration Toast -->
+  <div id="badgeToast" class="badge-toast">
+    <div style="font-size:0.75rem; color:var(--ll-accent-purple); text-transform:uppercase; font-weight:800; letter-spacing:0.05em; margin-bottom:0.25rem;">✨ Achievement Unlocked!</div>
+    <div id="badgeToastTitle" style="font-size:1.05rem; font-weight:800;">Badge Title</div>
+    <div id="badgeToastDesc" style="font-size:0.8rem; color:#c7d2fe; margin-top:0.2rem;">Badge Description</div>
+  </div>
+
   <!-- CDN dependencies with offline fallbacks -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- Scripts loaded in classic order for zero-build direct file:/// support -->
   <script src="js/state.js"></script>
   <script src="js/excuses.js"></script>
+  <script src="js/badges.js"></script>
   <script src="js/tracker.js"></script>
   <script src="js/app.js"></script>
 </body>

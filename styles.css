@@ -444,6 +444,93 @@ body {
   padding: 0.5rem 0;
 }
 
+/* Badges & Accolades Specific */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.badge-item {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--ll-border-card);
+  border-radius: var(--ll-radius-md);
+  padding: 0.85rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.badge-item.locked {
+  opacity: 0.5;
+  filter: grayscale(0.85);
+}
+
+.badge-item.unlocked {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: var(--ll-accent-sloth-gold);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+  animation: badgeGlow 0.5s ease-out;
+}
+
+@keyframes badgeGlow {
+  0% { transform: scale(0.96); box-shadow: 0 0 25px rgba(245, 158, 11, 0.5); }
+  100% { transform: scale(1); box-shadow: 0 0 15px rgba(245, 158, 11, 0.15); }
+}
+
+.badge-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.badge-content {
+  flex: 1;
+}
+
+.badge-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge-status-icon {
+  font-size: 0.75rem;
+}
+
+.badge-desc {
+  font-size: 0.75rem;
+  color: var(--ll-text-muted);
+  margin-top: 0.25rem;
+  line-height: 1.3;
+}
+
+/* Badge Toast Celebration */
+.badge-toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: #1e1b4b;
+  border: 2px solid var(--ll-accent-purple);
+  border-radius: var(--ll-radius-md);
+  padding: 1rem 1.25rem;
+  color: #fff;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: none;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .executive-header {

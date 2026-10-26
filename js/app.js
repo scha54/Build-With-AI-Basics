@@ -1,6 +1,6 @@
 /**
  * LazyLegend — Application Coordinator
- * Implements: spec.md > Components > ExecutiveHeaderComponent, SlothTrackerComponent, ProcrastinationConfessionalComponent
+ * Implements: spec.md > Components > ExecutiveHeaderComponent, SlothTrackerComponent, ProcrastinationConfessionalComponent, BadgeManagerComponent
  * Persists via: spec.md > Data Model & Persistence Layer
  */
 (function() {
@@ -10,6 +10,7 @@
   // Active state loaded from localStorage
   let appState = null;
   let currentRank = "Level 1: Novice Procrastinator";
+  let toastTimeout = null;
 
   function formatTime(totalSeconds) {
     const hours = Math.floor(totalSeconds / 3600);
@@ -47,11 +48,13 @@
     badge.textContent = currentRank;
   }
 
-  function triggerConfetti() {
+  function triggerConfetti(intensity = 'medium') {
     if (typeof window.confetti === 'function') {
+      const particleCount = intensity === 'high' ? 80 : 45;
+      const spread = intensity === 'high' ? 90 : 60;
       window.confetti({
-        particleCount: 50,
-        spread: 60,
+        particleCount,
+        spread,
         origin: { y: 0.7 },
         colors: ['#f59e0b', '#d97706', '#10b981', '#8b5cf6', '#38bdf8']
       });
@@ -67,7 +70,6 @@
       return;
     }
 
-    // Display recent 5 in reverse chronological order
     const recent = appState.confessions.slice(-5).reverse();
     list.innerHTML = recent.map(c => `
       <div class="confession-item">
@@ -75,6 +77,63 @@
         <span class="confession-points">+${c.pointsAwarded || 50} pts</span>
       </div>
     `).join('');
+  }
+
+  function renderBadges() {
+    const grid = document.getElementById('badgesGrid');
+    const countBadge = document.getElementById('badgesCountBadge');
+    if (!grid || !LazyLegend.BadgeManager) return;
+
+    const badges = LazyLegend.BadgeManager.getBadges();
+    const unlockedIds = appState.unlockedBadgeIds || [];
+
+    if (countBadge) {
+      countBadge.textContent = `${unlockedIds.length} / ${badges.length} Unlocked`;
+    }
+
+    grid.innerHTML = badges.map(b => {
+      const isUnlocked = unlockedIds.includes(b.id);
+      return `
+        <div class="badge-item ${isUnlocked ? 'unlocked' : 'locked'}" id="badge-${b.id}">
+          <div class="badge-icon">${b.icon}</div>
+          <div class="badge-content">
+            <div class="badge-name">
+              <span>${escapeHtml(b.name)}</span>
+              <span class="badge-status-icon">${isUnlocked ? '✨' : '🔒'}</span>
+            </div>
+            <div class="badge-desc">${escapeHtml(b.description)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function showBadgeToast(badge) {
+    const toast = document.getElementById('badgeToast');
+    const toastTitle = document.getElementById('badgeToastTitle');
+    const toastDesc = document.getElementById('badgeToastDesc');
+    if (!toast || !toastTitle || !toastDesc) return;
+
+    toastTitle.textContent = `${badge.icon} ${badge.name}`;
+    toastDesc.textContent = badge.description;
+    toast.style.display = 'block';
+
+    triggerConfetti('high');
+
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toast.style.display = 'none';
+    }, 4000);
+  }
+
+  function checkMilestones() {
+    if (!LazyLegend.BadgeManager) return;
+    const newlyUnlocked = LazyLegend.BadgeManager.evaluate(appState);
+    if (newlyUnlocked.length > 0) {
+      LazyLegend.StorageManager.save(appState);
+      renderBadges();
+      newlyUnlocked.forEach(badge => showBadgeToast(badge));
+    }
   }
 
   function escapeHtml(str) {
@@ -87,7 +146,6 @@
     if (!text || !text.trim()) return;
     const cleanText = text.trim();
 
-    // 1. Add confession record
     const entry = {
       id: Date.now().toString(),
       text: cleanText,
@@ -97,18 +155,16 @@
     appState.confessions.push(entry);
     appState.score += 50;
 
-    // 2. Persist state
     LazyLegend.StorageManager.save(appState);
 
-    // 3. Update DOM
     const scoreDisplay = document.getElementById('scoreDisplay');
     if (scoreDisplay) scoreDisplay.textContent = appState.score;
     showPointPopup(50);
     updateRank(appState.score);
     renderConfessions();
-    triggerConfetti();
+    triggerConfetti('medium');
+    checkMilestones();
 
-    // 4. Deadpan Scolding for physical effort of typing/clicking
     const reprimandBanner = document.getElementById('reprimandBanner');
     const reprimandText = document.getElementById('reprimandText');
     if (reprimandBanner && reprimandText) {
@@ -125,12 +181,14 @@
     if (timerClock) timerClock.textContent = formatTime(appState.longestStreak);
     updateRank(appState.score);
     renderConfessions();
+    renderBadges();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     // 1. Load persisted state or fallback
     appState = LazyLegend.StorageManager.load();
     renderState();
+    checkMilestones();
 
     const scoreDisplay = document.getElementById('scoreDisplay');
     const timerClock = document.getElementById('timerClock');
@@ -178,13 +236,13 @@
         appState.totalIdleSeconds += 1;
         appState.longestStreak = Math.max(appState.longestStreak, streakSeconds);
         
-        // Persist state on tick
         LazyLegend.StorageManager.save(appState);
 
         if (scoreDisplay) scoreDisplay.textContent = appState.score;
         if (timerClock) timerClock.textContent = formatTime(streakSeconds);
         showPointPopup(1);
         updateRank(appState.score);
+        checkMilestones();
       },
 
       onStateChange: (newState) => {
@@ -224,6 +282,7 @@
     LazyLegend.tracker = tracker;
     LazyLegend.getState = () => appState;
     LazyLegend.addConfession = addConfession;
+    LazyLegend.checkMilestones = checkMilestones;
     LazyLegend.triggerConfetti = triggerConfetti;
   });
 })();
