@@ -49,7 +49,7 @@ Build mode: learn
   Learner check: Stay still for 30 seconds to unlock "Speed Is Overrated", and roll an excuse to unlock "Tomorrow's Problem".
   Commit: `Add milestone badge manager and unlock animations`
 
-- [ ] **5. 1-Click Clipboard Certificate & Dynamic Leaderboard**
+- [x] **5. 1-Click Clipboard Certificate & Dynamic Leaderboard**
   Becomes usable: An Official Slacker Certificate card that copies a formatted emoji audit report to your clipboard, and a mock coworker leaderboard that dynamically re-ranks as your score climbs.
   Why now: Completes the full PoC journey—giving the user immediate social bragging rights to share in Slack/Discord and a live competitive rank.
   PRD ref: `prd.md > Features and Behavior > Slacker Certificate Action Card`, `prd.md > Mock Enterprise Leaderboard`
